@@ -3,17 +3,26 @@
   
   # Ultra-Pro Diff Checker
 
-  A professional text and code comparison tool with a modern dark interface. Compare files, view differences side-by-side or inline, and export results in multiple formats.
+  A professional text and code comparison tool with a modern interface. Compare files, view differences side-by-side or inline, and export results in multiple formats.
 
-  ![Version](https://img.shields.io/badge/version-1.0.0-blue)
+  ![Version](https://img.shields.io/badge/version-1.1.0-blue)
   ![License](https://img.shields.io/badge/license-MIT-green)
+  
+  **[Launch App →](https://mohammad-faiz-cloud-engineer.github.io/Ultra-Pro-Diff-Checker/)**
 </div>
 
 ---
 
 ## Quick Start
 
-1. Open `diff-checker.html` in your browser
+### Online
+
+Visit **[mohammad-faiz-cloud-engineer.github.io/Ultra-Pro-Diff-Checker](https://mohammad-faiz-cloud-engineer.github.io/Ultra-Pro-Diff-Checker/)** to use the app instantly in your browser.
+
+### Local
+
+1. Clone or download this repository
+2. Open `index.html` in your browser
 2. Paste your original text in the left panel
 3. Paste your modified text in the right panel
 4. Click **Compare** to see the differences
@@ -22,6 +31,12 @@
 That's it. No installation, no dependencies, no build process.
 
 ## Features
+
+**Theme Support**
+- Dark mode (default)
+- Light mode
+- Auto mode (follows system preference)
+- Persistent theme selection
 
 **Comparison Modes**
 - Split View: Side-by-side comparison with synchronized scrolling
@@ -34,6 +49,7 @@ That's it. No installation, no dependencies, no build process.
 - Markdown: Copy diff in GitHub/Jira format
 
 **Interface**
+- Light and dark theme support with auto-detection
 - Clean input mode for entering text
 - Full-screen diff view for better readability
 - Real-time line counting and statistics
@@ -45,6 +61,7 @@ That's it. No installation, no dependencies, no build process.
 |----------|--------|
 | `Ctrl/Cmd + Enter` | Compare texts or return to edit mode |
 | `Ctrl/Cmd + S` | Toggle between Split and Unified view |
+| `Ctrl/Cmd + T` | Toggle theme (Auto → Light → Dark) |
 
 ## Browser Support
 
@@ -66,34 +83,49 @@ Total size: ~43KB (uncompressed)
 ## File Structure
 
 ```
-├── diff-checker.html    # Main application
+├── index.html           # Main application
 ├── script.js            # Application logic
-├── styles.css           # Styling
-└── README.md           # This file
+├── styles.css           # Styling with theme support
+├── manifest.json        # PWA manifest
+├── icons/               # App icons
+└── README.md            # This file
 ```
 
 ## Customization
 
-The app uses CSS variables for easy theming. Edit `styles.css`:
+The app uses CSS variables for easy theming. Both light and dark themes are fully supported:
 
 ```css
-:root {
+/* Dark Theme */
+[data-theme="dark"] {
     --bg-primary: #0a0a0a;
     --accent-color: #ffffff;
     --added-text: #22c55e;
     --removed-text: #ef4444;
 }
+
+/* Light Theme */
+[data-theme="light"] {
+    --bg-primary: #ffffff;
+    --accent-color: #1a1a1a;
+    --added-text: #16a34a;
+    --removed-text: #dc2626;
+}
 ```
+
+## Live Demo
+
+The app is live at: **[mohammad-faiz-cloud-engineer.github.io/Ultra-Pro-Diff-Checker](https://mohammad-faiz-cloud-engineer.github.io/Ultra-Pro-Diff-Checker/)**
 
 ## Deployment
 
-Host anywhere:
-- GitHub Pages
+This project is deployed on GitHub Pages and can be hosted anywhere:
+- GitHub Pages (current deployment)
 - Netlify
 - Vercel
 - Any static web server
 
-No server-side processing required.
+No server-side processing required. All operations run client-side for maximum privacy and performance.
 
 ## Performance
 
@@ -102,9 +134,9 @@ No server-side processing required.
 - Smooth 60fps scrolling
 - Memory efficient (< 50MB)
 
-## Privacy
+## Privacy & Security
 
-All processing happens in your browser. No data is sent to any server. Your text never leaves your machine.
+All processing happens entirely in your browser. No data is sent to any server. Your text never leaves your machine, ensuring complete privacy and security for sensitive comparisons.
 
 ## Known Limitations
 
