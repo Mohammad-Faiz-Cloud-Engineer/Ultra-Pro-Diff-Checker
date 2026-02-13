@@ -2,6 +2,26 @@
 
 All notable changes to Ultra-Pro Diff Checker will be documented in this file.
 
+## [1.1.0] - 2026-02-14
+
+### Added
+- Light and dark theme support with auto-detection
+- Theme toggle button with smooth transitions
+- System preference detection for automatic theme selection
+- Persistent theme storage using localStorage
+- Theme-aware export functionality (PNG, PDF, HTML)
+
+### Improved
+- Enhanced CSS architecture with theme variables
+- Optimized color contrast for both themes
+- Better accessibility in light mode
+- Improved visual hierarchy across themes
+
+### Fixed
+- Manifest start_url now correctly points to index.html
+- Theme colors properly applied to all UI elements
+- Export functions now respect current theme
+
 ## [1.0.0] - 2026-02-13
 
 ### Initial Release
