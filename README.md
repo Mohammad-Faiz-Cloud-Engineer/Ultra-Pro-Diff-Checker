@@ -1,9 +1,15 @@
-# Ultra-Pro Diff Checker
+<div align="center">
+  <img src="logo.svg" alt="Ultra-Pro Diff Checker Logo" width="120" height="120">
+  
+  # Ultra-Pro Diff Checker
 
-A professional text and code comparison tool with a modern dark interface. Compare files, view differences side-by-side or inline, and export results in multiple formats.
+  A professional text and code comparison tool with a modern dark interface. Compare files, view differences side-by-side or inline, and export results in multiple formats.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+  ![Version](https://img.shields.io/badge/version-1.0.0-blue)
+  ![License](https://img.shields.io/badge/license-MIT-green)
+</div>
+
+---
 
 ## Quick Start
 

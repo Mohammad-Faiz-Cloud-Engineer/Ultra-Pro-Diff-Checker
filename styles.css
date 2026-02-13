@@ -107,6 +107,29 @@ header {
     font-weight: 600;
     letter-spacing: -0.02em;
     user-select: none;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.1));
+    transition: transform var(--transition-base);
+}
+
+.logo-icon:hover {
+    transform: scale(1.05);
+}
+
+.logo-text {
+    background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600;
 }
 
 .controls {
@@ -574,6 +597,15 @@ textarea:focus {
         font-size: var(--font-size-base);
     }
 
+    .logo-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .logo-text {
+        font-size: var(--font-size-base);
+    }
+
     .controls {
         width: 100%;
         justify-content: space-between;
@@ -621,6 +653,15 @@ textarea:focus {
 @media (max-width: 480px) {
     header {
         padding: var(--spacing-md);
+    }
+
+    .logo-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .logo-text {
+        font-size: var(--font-size-sm);
     }
 
     .stats-bar {

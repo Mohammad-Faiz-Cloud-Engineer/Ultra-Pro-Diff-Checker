@@ -1,0 +1,31 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="g512" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#a0a0a0;stop-opacity:1" />
+        </linearGradient>
+        <filter id="glow512">
+            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+            <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </defs>
+    <circle cx="256" cy="256" r="240" fill="#0a0a0a" stroke="url(#g512)" stroke-width="6" opacity="0.8"/>
+    <rect x="76" y="152" width="128" height="26" rx="10" fill="url(#g512)" opacity="0.9" filter="url(#glow512)"/>
+    <rect x="76" y="204" width="128" height="26" rx="10" fill="#ef4444" opacity="0.9" filter="url(#glow512)"/>
+    <rect x="76" y="256" width="128" height="26" rx="10" fill="url(#g512)" opacity="0.9" filter="url(#glow512)"/>
+    <rect x="76" y="308" width="128" height="26" rx="10" fill="url(#g512)" opacity="0.9" filter="url(#glow512)"/>
+    <rect x="308" y="152" width="128" height="26" rx="10" fill="url(#g512)" opacity="0.9" filter="url(#glow512)"/>
+    <rect x="308" y="204" width="128" height="26" rx="10" fill="url(#g512)" opacity="0.9" filter="url(#glow512)"/>
+    <rect x="308" y="256" width="128" height="26" rx="10" fill="#22c55e" opacity="0.9" filter="url(#glow512)"/>
+    <rect x="308" y="308" width="128" height="26" rx="10" fill="url(#g512)" opacity="0.9" filter="url(#glow512)"/>
+    <line x1="256" y1="128" x2="256" y2="360" stroke="url(#g512)" stroke-width="8" opacity="0.6" stroke-linecap="round"/>
+    <path d="M 218 192 L 256 230 L 294 192" stroke="#ef4444" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" filter="url(#glow512)"/>
+    <path d="M 294 268 L 256 230 L 218 268" stroke="#22c55e" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" filter="url(#glow512)"/>
+    <circle cx="102" cy="102" r="8" fill="url(#g512)" opacity="0.6"/>
+    <circle cx="410" cy="102" r="8" fill="url(#g512)" opacity="0.6"/>
+    <circle cx="102" cy="410" r="8" fill="url(#g512)" opacity="0.6"/>
+    <circle cx="410" cy="410" r="8" fill="url(#g512)" opacity="0.6"/>
+</svg>
