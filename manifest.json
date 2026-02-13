@@ -2,7 +2,7 @@
   "name": "Ultra-Pro Diff Checker",
   "short_name": "Diff Checker",
   "description": "Professional text and code comparison tool",
-  "start_url": "./diff-checker.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0a0a0a",
   "theme_color": "#0a0a0a",
