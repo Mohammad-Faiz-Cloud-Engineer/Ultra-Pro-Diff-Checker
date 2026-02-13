@@ -20,7 +20,8 @@ const DiffApp = (() => {
         originalText: '',
         modifiedText: '',
         diff: null,
-        stats: { added: 0, removed: 0 }
+        stats: { added: 0, removed: 0 },
+        theme: localStorage.getItem('theme') || 'auto'
     };
 
     const elements = {};
@@ -45,6 +46,7 @@ const DiffApp = (() => {
 
         cacheElements();
         attachEventListeners();
+        initTheme();
         switchToDisplayMode('input');
         updateStats();
     }
@@ -64,6 +66,35 @@ const DiffApp = (() => {
         elements.addedCount = document.getElementById('addedCount');
         elements.removedCount = document.getElementById('removedCount');
         elements.statusText = document.getElementById('statusText');
+        elements.themeToggle = document.getElementById('themeToggle');
+    }
+
+    // ============================================================================
+    // THEME MANAGEMENT
+    // ============================================================================
+
+    function initTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'auto';
+        applyTheme(savedTheme);
+    }
+
+    function toggleTheme() {
+        const themes = ['auto', 'light', 'dark'];
+        const currentIndex = themes.indexOf(state.theme);
+        const nextTheme = themes[(currentIndex + 1) % themes.length];
+        
+        state.theme = nextTheme;
+        localStorage.setItem('theme', nextTheme);
+        applyTheme(nextTheme);
+    }
+
+    function applyTheme(theme) {
+        if (theme === 'auto') {
+            document.documentElement.removeAttribute('data-theme');
+        } else {
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+        state.theme = theme;
     }
 
     // ============================================================================
@@ -77,6 +108,7 @@ const DiffApp = (() => {
         elements.unifiedViewBtn.addEventListener('click', () => setViewMode('unified'));
         elements.exportBtn.addEventListener('click', toggleExportMenu);
         elements.exportDropdown.addEventListener('click', handleExportAction);
+        elements.themeToggle.addEventListener('click', toggleTheme);
 
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.export-menu')) {
@@ -153,6 +185,11 @@ const DiffApp = (() => {
         if ((e.ctrlKey || e.metaKey) && e.key === 's' && state.displayMode === 'diff') {
             e.preventDefault();
             setViewMode(state.viewMode === 'split' ? 'unified' : 'split');
+        }
+
+        if ((e.ctrlKey || e.metaKey) && e.key === 't') {
+            e.preventDefault();
+            toggleTheme();
         }
     }
 
@@ -425,8 +462,11 @@ const DiffApp = (() => {
                 throw new Error('html2canvas library not loaded');
             }
 
+            const bgColor = getComputedStyle(document.documentElement)
+                .getPropertyValue('--bg-primary').trim();
+
             const canvas = await html2canvas(elements.diffContainer, {
-                backgroundColor: '#0a0a0a',
+                backgroundColor: bgColor,
                 scale: 2,
                 logging: false,
                 useCORS: true
@@ -457,8 +497,11 @@ const DiffApp = (() => {
             }
 
             const { jsPDF } = window.jspdf;
+            const bgColor = getComputedStyle(document.documentElement)
+                .getPropertyValue('--bg-primary').trim();
+
             const canvas = await html2canvas(elements.diffContainer, {
-                backgroundColor: '#0a0a0a',
+                backgroundColor: bgColor,
                 scale: 2,
                 logging: false,
                 useCORS: true
@@ -514,6 +557,32 @@ const DiffApp = (() => {
 
     function generateHTMLReport() {
         const timestamp = new Date().toLocaleString();
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark' || 
+                      (!document.documentElement.getAttribute('data-theme') && 
+                       window.matchMedia('(prefers-color-scheme: dark)').matches);
+        
+        const colors = isDark ? {
+            bg: '#0a0a0a',
+            bgSecondary: '#0f0f0f',
+            text: '#ffffff',
+            textSecondary: '#a0a0a0',
+            border: 'rgba(255,255,255,0.1)',
+            addedBg: 'rgba(34, 197, 94, 0.15)',
+            addedText: '#22c55e',
+            removedBg: 'rgba(239, 68, 68, 0.15)',
+            removedText: '#ef4444'
+        } : {
+            bg: '#ffffff',
+            bgSecondary: '#f1f3f5',
+            text: '#1a1a1a',
+            textSecondary: '#6c757d',
+            border: 'rgba(0,0,0,0.1)',
+            addedBg: 'rgba(34, 197, 94, 0.1)',
+            addedText: '#16a34a',
+            removedBg: 'rgba(239, 68, 68, 0.1)',
+            removedText: '#dc2626'
+        };
+
         return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -523,23 +592,23 @@ const DiffApp = (() => {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #ffffff; padding: 2rem; }
-        .report-header { border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        body { font-family: 'Inter', sans-serif; background: ${colors.bg}; color: ${colors.text}; padding: 2rem; }
+        .report-header { border-bottom: 1px solid ${colors.border}; padding-bottom: 1.5rem; margin-bottom: 2rem; }
         .report-header h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
-        .report-header p { color: #a0a0a0; font-size: 0.875rem; }
+        .report-header p { color: ${colors.textSecondary}; font-size: 0.875rem; }
         .stats { margin-top: 1rem; display: flex; gap: 1.5rem; }
-        .stat-added { color: #22c55e; }
-        .stat-removed { color: #ef4444; }
+        .stat-added { color: ${colors.addedText}; }
+        .stat-removed { color: ${colors.removedText}; }
         .diff-view { font-family: 'Fira Code', monospace; font-size: 0.875rem; line-height: 1.6; display: flex; }
         .diff-side { flex: 1; }
         .diff-line, .unified-line { display: flex; min-height: 1.6em; }
-        .line-number { background: #0f0f0f; color: #a0a0a0; padding: 0 0.75rem; text-align: right; min-width: 3.5rem; border-right: 1px solid rgba(255,255,255,0.1); user-select: none; }
+        .line-number { background: ${colors.bgSecondary}; color: ${colors.textSecondary}; padding: 0 0.75rem; text-align: right; min-width: 3.5rem; border-right: 1px solid ${colors.border}; user-select: none; }
         .line-content { padding: 0 1rem; flex: 1; white-space: pre-wrap; word-break: break-all; }
-        .line-added { background: rgba(34, 197, 94, 0.15); }
-        .line-added .line-content { color: #22c55e; }
-        .line-removed { background: rgba(239, 68, 68, 0.15); }
-        .line-removed .line-content { color: #ef4444; }
-        .line-unchanged { color: #a0a0a0; }
+        .line-added { background: ${colors.addedBg}; }
+        .line-added .line-content { color: ${colors.addedText}; }
+        .line-removed { background: ${colors.removedBg}; }
+        .line-removed .line-content { color: ${colors.removedText}; }
+        .line-unchanged { color: ${colors.textSecondary}; }
         .unified-view { padding: 1rem; }
     </style>
 </head>
