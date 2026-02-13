@@ -439,7 +439,7 @@ const DiffApp = (() => {
 
             setStatus('PNG exported successfully');
         } catch (error) {
-            showError('Failed to export PNG');
+            showError('Failed to export PNG: ' + error.message);
         }
     }
 
@@ -486,7 +486,7 @@ const DiffApp = (() => {
             pdf.save(`diff-${Date.now()}.pdf`);
             setStatus('PDF exported successfully');
         } catch (error) {
-            showError('Failed to export PDF');
+            showError('Failed to export PDF: ' + error.message);
         }
     }
 
@@ -508,7 +508,7 @@ const DiffApp = (() => {
 
             setStatus('HTML report downloaded');
         } catch (error) {
-            showError('Failed to export HTML');
+            showError('Failed to export HTML: ' + error.message);
         }
     }
 
@@ -565,10 +565,15 @@ const DiffApp = (() => {
 
         try {
             const markdown = generateMarkdown();
+            
+            if (!navigator.clipboard) {
+                throw new Error('Clipboard API not available');
+            }
+            
             await navigator.clipboard.writeText(markdown);
             setStatus('Markdown copied to clipboard');
         } catch (error) {
-            showError('Failed to copy Markdown');
+            showError('Failed to copy Markdown: ' + error.message);
         }
     }
 
