@@ -3,7 +3,7 @@
  * Professional text and code comparison tool
  * 
  * @author Mohammad Faiz
- * @version 1.0.0
+ * @version 1.2.0
  * @license MIT
  */
 
@@ -17,6 +17,7 @@ const DiffApp = (() => {
     const state = {
         viewMode: 'split',
         displayMode: 'input',
+        changesOnly: false,
         originalText: '',
         modifiedText: '',
         diff: null,
@@ -40,7 +41,7 @@ const DiffApp = (() => {
 
     function initApp() {
         if (typeof Diff === 'undefined') {
-            alert('Required libraries failed to load. Please refresh the page.');
+            setStatus('Required libraries failed to load. Please refresh the page.');
             return;
         }
 
@@ -61,6 +62,7 @@ const DiffApp = (() => {
         elements.clearBtn = document.getElementById('clearBtn');
         elements.splitViewBtn = document.getElementById('splitViewBtn');
         elements.unifiedViewBtn = document.getElementById('unifiedViewBtn');
+        elements.changesOnlyBtn = document.getElementById('changesOnlyBtn');
         elements.exportBtn = document.getElementById('exportBtn');
         elements.exportDropdown = document.getElementById('exportDropdown');
         elements.addedCount = document.getElementById('addedCount');
@@ -106,6 +108,7 @@ const DiffApp = (() => {
         elements.clearBtn.addEventListener('click', handleClear);
         elements.splitViewBtn.addEventListener('click', () => setViewMode('split'));
         elements.unifiedViewBtn.addEventListener('click', () => setViewMode('unified'));
+        elements.changesOnlyBtn.addEventListener('click', toggleChangesOnly);
         elements.exportBtn.addEventListener('click', toggleExportMenu);
         elements.exportDropdown.addEventListener('click', handleExportAction);
         elements.themeToggle.addEventListener('click', toggleTheme);
@@ -129,7 +132,7 @@ const DiffApp = (() => {
         state.modifiedText = elements.modifiedTextarea.value;
 
         if (!state.originalText && !state.modifiedText) {
-            alert('Please enter text in both panels to compare.');
+            setStatus('Please enter text in at least one panel');
             return;
         }
 
@@ -146,9 +149,11 @@ const DiffApp = (() => {
         state.modifiedText = '';
         state.diff = null;
         state.stats = { added: 0, removed: 0 };
+        state.changesOnly = false;
         
         elements.originalTextarea.value = '';
         elements.modifiedTextarea.value = '';
+        elements.changesOnlyBtn.classList.remove('active');
         
         switchToDisplayMode('input');
         updateStats();
@@ -164,6 +169,7 @@ const DiffApp = (() => {
             elements.compareBtn.classList.add('compare-btn');
             elements.splitViewBtn.style.display = 'none';
             elements.unifiedViewBtn.style.display = 'none';
+            elements.changesOnlyBtn.style.display = 'none';
             elements.exportBtn.parentElement.style.display = 'none';
         } else {
             elements.inputMode.classList.add('hidden');
@@ -172,6 +178,7 @@ const DiffApp = (() => {
             elements.compareBtn.classList.remove('compare-btn');
             elements.splitViewBtn.style.display = 'inline-block';
             elements.unifiedViewBtn.style.display = 'inline-block';
+            elements.changesOnlyBtn.style.display = 'inline-block';
             elements.exportBtn.parentElement.style.display = 'block';
         }
     }
@@ -187,6 +194,11 @@ const DiffApp = (() => {
             setViewMode(state.viewMode === 'split' ? 'unified' : 'split');
         }
 
+        if ((e.ctrlKey || e.metaKey) && e.key === 'd' && state.displayMode === 'diff') {
+            e.preventDefault();
+            toggleChangesOnly();
+        }
+
         if ((e.ctrlKey || e.metaKey) && e.key === 't') {
             e.preventDefault();
             toggleTheme();
@@ -200,15 +212,11 @@ const DiffApp = (() => {
         const action = button.dataset.action;
         closeExportMenu();
 
-        const exportActions = {
-            png: exportAsPNG,
-            pdf: exportAsPDF,
-            html: exportAsHTML,
-            markdown: copyAsMarkdown
-        };
-
-        if (exportActions[action]) {
-            exportActions[action]();
+        switch (action) {
+            case 'png': exportAsPNG(); break;
+            case 'pdf': exportAsPDF(); break;
+            case 'html': exportAsHTML(); break;
+            case 'markdown': copyAsMarkdown(); break;
         }
     }
 
@@ -233,7 +241,7 @@ const DiffApp = (() => {
             calculateStats();
             updateStats();
         } catch (error) {
-            showError('Failed to compute differences: ' + error.message);
+            setStatus('Failed to compute differences: ' + error.message);
         }
     }
 
@@ -314,19 +322,26 @@ const DiffApp = (() => {
 
             if (part.added) {
                 lines.forEach(line => {
-                    leftLines.push({ type: 'empty', content: '', lineNum: '' });
+                    if (!state.changesOnly) {
+                        leftLines.push({ type: 'empty', content: '', lineNum: '' });
+                    }
                     rightLines.push({ type: 'added', content: line, lineNum: rightLineNum++ });
                 });
             } else if (part.removed) {
                 lines.forEach(line => {
                     leftLines.push({ type: 'removed', content: line, lineNum: leftLineNum++ });
-                    rightLines.push({ type: 'empty', content: '', lineNum: '' });
+                    if (!state.changesOnly) {
+                        rightLines.push({ type: 'empty', content: '', lineNum: '' });
+                    }
                 });
-            } else {
+            } else if (!state.changesOnly) {
                 lines.forEach(line => {
                     leftLines.push({ type: 'unchanged', content: line, lineNum: leftLineNum++ });
                     rightLines.push({ type: 'unchanged', content: line, lineNum: rightLineNum++ });
                 });
+            } else {
+                leftLineNum += lines.length;
+                rightLineNum += lines.length;
             }
         });
 
@@ -400,6 +415,11 @@ const DiffApp = (() => {
                     prefix = '−';
                 }
 
+                if (state.changesOnly && type === 'unchanged') {
+                    lineNum++;
+                    return;
+                }
+
                 lines.push({
                     type,
                     content: line,
@@ -430,6 +450,18 @@ const DiffApp = (() => {
         renderDiff();
     }
 
+    function toggleChangesOnly() {
+        state.changesOnly = !state.changesOnly;
+        
+        if (state.changesOnly) {
+            elements.changesOnlyBtn.classList.add('active');
+        } else {
+            elements.changesOnlyBtn.classList.remove('active');
+        }
+        
+        renderDiff();
+    }
+
     // ============================================================================
     // EXPORT MENU
     // ============================================================================
@@ -451,7 +483,7 @@ const DiffApp = (() => {
 
     async function exportAsPNG() {
         if (!state.diff) {
-            showError('No diff to export');
+            setStatus('No diff to export');
             return;
         }
 
@@ -468,8 +500,7 @@ const DiffApp = (() => {
             const canvas = await html2canvas(elements.diffContainer, {
                 backgroundColor: bgColor,
                 scale: 2,
-                logging: false,
-                useCORS: true
+                logging: false
             });
 
             const link = document.createElement('a');
@@ -479,13 +510,13 @@ const DiffApp = (() => {
 
             setStatus('PNG exported successfully');
         } catch (error) {
-            showError('Failed to export PNG: ' + error.message);
+            setStatus('Failed to export PNG: ' + error.message);
         }
     }
 
     async function exportAsPDF() {
         if (!state.diff) {
-            showError('No diff to export');
+            setStatus('No diff to export');
             return;
         }
 
@@ -503,8 +534,7 @@ const DiffApp = (() => {
             const canvas = await html2canvas(elements.diffContainer, {
                 backgroundColor: bgColor,
                 scale: 2,
-                logging: false,
-                useCORS: true
+                logging: false
             });
 
             const imgData = canvas.toDataURL('image/png');
@@ -529,13 +559,13 @@ const DiffApp = (() => {
             pdf.save(`diff-${Date.now()}.pdf`);
             setStatus('PDF exported successfully');
         } catch (error) {
-            showError('Failed to export PDF: ' + error.message);
+            setStatus('Failed to export PDF: ' + error.message);
         }
     }
 
     function exportAsHTML() {
         if (!state.diff) {
-            showError('No diff to export');
+            setStatus('No diff to export');
             return;
         }
 
@@ -551,7 +581,7 @@ const DiffApp = (() => {
 
             setStatus('HTML report downloaded');
         } catch (error) {
-            showError('Failed to export HTML: ' + error.message);
+            setStatus('Failed to export HTML: ' + error.message);
         }
     }
 
@@ -628,7 +658,7 @@ const DiffApp = (() => {
 
     async function copyAsMarkdown() {
         if (!state.diff) {
-            showError('No diff to copy');
+            setStatus('No diff to copy');
             return;
         }
 
@@ -642,7 +672,7 @@ const DiffApp = (() => {
             await navigator.clipboard.writeText(markdown);
             setStatus('Markdown copied to clipboard');
         } catch (error) {
-            showError('Failed to copy Markdown: ' + error.message);
+            setStatus('Failed to copy Markdown: ' + error.message);
         }
     }
 
@@ -673,14 +703,12 @@ const DiffApp = (() => {
     // ============================================================================
 
     function escapeHtml(text) {
-        const map = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-        };
-        return text.replace(/[&<>"']/g, m => map[m]);
+        return text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 
     function setStatus(message, showSpinner = false) {
@@ -689,11 +717,10 @@ const DiffApp = (() => {
         } else {
             elements.statusText.textContent = message;
         }
-    }
-
-    function showError(message) {
-        setStatus(message);
-        setTimeout(() => setStatus('Ready'), 3000);
+        
+        if (!showSpinner && message !== 'Ready' && message !== 'Compared') {
+            setTimeout(() => setStatus('Ready'), 3000);
+        }
     }
 
     // ============================================================================

@@ -5,7 +5,7 @@
 
   A professional text and code comparison tool with a modern interface. Compare files, view differences side-by-side or inline, and export results in multiple formats.
 
-  ![Version](https://img.shields.io/badge/version-1.1.0-blue)
+  ![Version](https://img.shields.io/badge/version-1.2.0-blue)
   ![License](https://img.shields.io/badge/license-MIT-green)
   
   **[Launch App →](https://mohammad-faiz-cloud-engineer.github.io/Ultra-Pro-Diff-Checker/)**
@@ -41,6 +41,7 @@ That's it. No installation, no dependencies, no build process.
 **Comparison Modes**
 - Split View: Side-by-side comparison with synchronized scrolling
 - Unified View: Inline diff with +/- indicators
+- Changes Only: Show only what changed (additions and deletions)
 
 **Export Options**
 - PNG: High-quality image export
@@ -61,6 +62,7 @@ That's it. No installation, no dependencies, no build process.
 |----------|--------|
 | `Ctrl/Cmd + Enter` | Compare texts or return to edit mode |
 | `Ctrl/Cmd + S` | Toggle between Split and Unified view |
+| `Ctrl/Cmd + D` | Toggle Changes Only mode |
 | `Ctrl/Cmd + T` | Toggle theme (Auto → Light → Dark) |
 
 ## Browser Support

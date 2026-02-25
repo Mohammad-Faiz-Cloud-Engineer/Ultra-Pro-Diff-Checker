@@ -2,6 +2,31 @@
 
 All notable changes to Ultra-Pro Diff Checker will be documented in this file.
 
+## [1.2.0] - 2026-02-25
+
+### Added
+- Changes Only mode: New button to show only differences (additions and deletions)
+- Keyboard shortcut (Ctrl/Cmd + D) for toggling Changes Only mode
+- Smart filtering that hides unchanged lines in both Split and Unified views
+
+### Improved
+- Optimized diff rendering performance
+- Reduced code redundancy by consolidating error handling
+- Simplified export action handling with switch statement
+- Enhanced status message system with auto-clear functionality
+- Improved HTML escaping performance
+- Better validation messages for empty inputs
+
+### Fixed
+- Removed redundant showError function
+- Removed unnecessary useCORS option from html2canvas calls
+- Consolidated status handling logic
+
+### Technical
+- Cleaner state management with changesOnly flag
+- More efficient event handling
+- Reduced bundle size through code optimization
+
 ## [1.1.0] - 2026-02-14
 
 ### Added
